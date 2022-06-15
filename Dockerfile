@@ -2,7 +2,7 @@ FROM tiangolo/uwsgi-nginx:python3.7
 
 LABEL maintainer="Sebastian Ramirez <tiangolo@gmail.com>"
 
-RUN pip install flask requests
+RUN pip install flask requests flask_cors
 
 COPY ./app /app
 WORKDIR /app
