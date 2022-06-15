@@ -3,6 +3,8 @@ import re
 
 import requests
 from flask import Flask, Response, redirect, request
+# 引入 flask cors
+from flask_cors import CORS
 from requests.exceptions import (
     ChunkedEncodingError,
     ContentDecodingError, ConnectionError, StreamConsumedError)
@@ -39,6 +41,8 @@ white_list = [tuple([x.replace(' ', '') for x in i.split('/')]) for i in white_l
 black_list = [tuple([x.replace(' ', '') for x in i.split('/')]) for i in black_list.split('\n') if i]
 pass_list = [tuple([x.replace(' ', '') for x in i.split('/')]) for i in pass_list.split('\n') if i]
 app = Flask(__name__)
+# 通过CORS解决跨域问题
+CORS(app, resources={r"/*": {"origins": "win.gxzyzd.com"}})
 CHUNK_SIZE = 1024 * 10
 index_html = requests.get(ASSET_URL, timeout=10).text
 icon_r = requests.get(ASSET_URL + '/favicon.ico', timeout=10).content
@@ -161,6 +165,11 @@ def handler(u):
 
 def proxy(u, allow_redirects=False):
     headers = {}
+    # 允许跨域
+    headers['Access-Control-Allow-Origin'] = 'win.gxzyzd.com'
+    headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept, X-Requested-With'
+    headers['Access-Control-Allow-Credentials'] = 'true'
     r_headers = dict(request.headers)
     if 'Host' in r_headers:
         r_headers.pop('Host')
