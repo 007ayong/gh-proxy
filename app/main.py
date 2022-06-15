@@ -165,11 +165,6 @@ def handler(u):
 
 def proxy(u, allow_redirects=False):
     headers = {}
-    # 允许跨域
-    headers['Access-Control-Allow-Origin'] = 'win.gxzyzd.com'
-    headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-    headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept, X-Requested-With'
-    headers['Access-Control-Allow-Credentials'] = 'true'
     r_headers = dict(request.headers)
     if 'Host' in r_headers:
         r_headers.pop('Host')
@@ -193,7 +188,11 @@ def proxy(u, allow_redirects=False):
                 headers['Location'] = '/' + _location
             else:
                 return proxy(_location, True)
-
+        # 设置响应头跨域
+        headers['Access-Control-Allow-Origin'] = '*'
+        headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
+        headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,X-Requested-With'
+        headers['Access-Control-Allow-Credentials'] = 'true'
         return Response(generate(), headers=headers, status=r.status_code)
     except Exception as e:
         headers['content-type'] = 'text/html; charset=UTF-8'
