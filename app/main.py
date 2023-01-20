@@ -167,6 +167,10 @@ def proxy(u, allow_redirects=False):
             url = 'https://' + url[7:]
         r = requests.request(method=request.method, url=url, data=request.data, headers=r_headers, stream=True, allow_redirects=allow_redirects)
         headers = dict(r.headers)
+        
+        if r.status_code == 302 or r.status_code == 301:
+            target_url = r.headers.get('Location')
+            return proxy(target_url, allow_redirects = True)
 
         if 'Content-length' in r.headers and int(r.headers['Content-length']) > size_limit:
             return redirect(u + request.url.replace(request.base_url, '', 1))
